@@ -254,7 +254,13 @@ void main() {
       findsOneWidget,
     );
     expect(find.text('Erro de conexão'), findsOneWidget);
-    expect(find.textContaining('Falha ao conectar com a API'), findsOneWidget);
+    expect(
+      find.text(
+        'Falha ao conectar com a API: ClientException: Failed host lookup, '
+        'uri=${NoticiaService.urlInvalida}',
+      ),
+      findsOneWidget,
+    );
     expect(find.text('Tentar Novamente'), findsOneWidget);
     expect(find.byType(ListTile), findsNothing);
 

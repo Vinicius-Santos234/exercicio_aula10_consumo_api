@@ -85,7 +85,10 @@ class _FeedNoticiasScreenState extends State<FeedNoticiasScreen> {
       if (mounted) setState(() => _noticias = lista);
     } catch (e) {
       if (mounted) {
-        setState(() => _erro = e.toString().replaceAll('Exception: ', ''));
+        // \b evita cortar o meio de nomes como "ClientException: "
+        setState(() {
+          _erro = e.toString().replaceAll(RegExp(r'\bException: '), '');
+        });
       }
     } finally {
       if (mounted) setState(() => _carregando = false);
