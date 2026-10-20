@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import 'screens/feed_noticias_screen.dart';
 
 void main() => runApp(const MeuApp());
