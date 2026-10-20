@@ -56,6 +56,24 @@ class _FeedNoticiasScreenState extends State<FeedNoticiasScreen> {
     );
   }
 
+  void _alternarSimulacaoErro() {
+    _service.alternarSimulacaoErro();
+
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(
+        SnackBar(
+          content: Text(
+            _service.simulandoErro
+                ? 'Simulação ativada: requisitando uma URL incorreta'
+                : 'URL padrão da API restaurada',
+          ),
+        ),
+      );
+
+    _carregarFeed();
+  }
+
   Future<void> _carregarFeed() async {
     setState(() {
       _carregando = true;
@@ -81,6 +99,18 @@ class _FeedNoticiasScreenState extends State<FeedNoticiasScreen> {
         title: const Text('Feed de Notícias'),
         actions: [
           IconButton(
+            icon: Icon(
+              _service.simulandoErro
+                  ? Icons.bug_report
+                  : Icons.bug_report_outlined,
+            ),
+            tooltip: _service.simulandoErro
+                ? 'Restaurar URL padrão'
+                : 'Simular erro de conexão',
+            isSelected: _service.simulandoErro,
+            onPressed: _alternarSimulacaoErro,
+          ),
+          IconButton(
             icon: const Icon(Icons.refresh),
             tooltip: 'Recarregar',
             onPressed: _carregarFeed,
@@ -89,8 +119,31 @@ class _FeedNoticiasScreenState extends State<FeedNoticiasScreen> {
       ),
       body: Column(
         children: [
+          if (_service.simulandoErro) _buildAvisoSimulacao(),
           _buildCampoBusca(),
           Expanded(child: _buildConteudo()),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildAvisoSimulacao() {
+    final cores = Theme.of(context).colorScheme;
+
+    return Container(
+      width: double.infinity,
+      color: cores.tertiaryContainer,
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      child: Row(
+        children: [
+          Icon(Icons.science_outlined, size: 18, color: cores.tertiary),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Text(
+              'Modo de teste: ${NoticiaService.urlInvalida}',
+              style: TextStyle(color: cores.onTertiaryContainer),
+            ),
+          ),
         ],
       ),
     );
@@ -217,6 +270,13 @@ class _FeedNoticiasScreenState extends State<FeedNoticiasScreen> {
                     icon: const Icon(Icons.refresh),
                     label: const Text('Tentar Novamente'),
                   ),
+                  if (_service.simulandoErro) ...[
+                    const SizedBox(height: 8),
+                    TextButton(
+                      onPressed: _alternarSimulacaoErro,
+                      child: const Text('Restaurar URL padrão'),
+                    ),
+                  ],
                 ],
               ),
             ),
