@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../models/noticia_model.dart';
 import '../services/noticia_service.dart';
+import 'detalhe_noticia_screen.dart';
 
 class FeedNoticiasScreen extends StatefulWidget {
   final NoticiaService? service;
@@ -44,6 +45,15 @@ class _FeedNoticiasScreenState extends State<FeedNoticiasScreen> {
   void _limparBusca() {
     _buscaController.clear();
     setState(() => _termoBusca = '');
+  }
+
+  void _abrirDetalhes(NoticiaModel noticia) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => DetalheNoticiaScreen(noticia: noticia),
+      ),
+    );
   }
 
   Future<void> _carregarFeed() async {
@@ -163,6 +173,8 @@ class _FeedNoticiasScreenState extends State<FeedNoticiasScreen> {
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
             ),
+            trailing: const Icon(Icons.chevron_right),
+            onTap: () => _abrirDetalhes(noticia),
           ),
         );
       },
